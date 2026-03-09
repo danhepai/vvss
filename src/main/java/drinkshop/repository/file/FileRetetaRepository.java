@@ -1,14 +1,14 @@
 package drinkshop.repository.file;
 
 import drinkshop.domain.IngredientReteta;
-import drinkshop.domain.Reteta;
+import drinkshop.domain.Recipe;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FileRetetaRepository
-        extends FileAbstractRepository<Integer, Reteta> {
+        extends FileAbstractRepository<Integer, Recipe> {
 
     public FileRetetaRepository(String fileName) {
         super(fileName);
@@ -16,12 +16,12 @@ public class FileRetetaRepository
     }
 
     @Override
-    protected Integer getId(Reteta entity) {
+    protected Integer getId(Recipe entity) {
         return entity.getId();
     }
 
     @Override
-    protected Reteta extractEntity(String line) {
+    protected Recipe extractEntity(String line) {
 
         String[] elems = line.split(",");
 
@@ -35,11 +35,11 @@ public class FileRetetaRepository
             Double ingredientQuantity = Double.parseDouble(ingredientSeparat[1]);
             ingrediente.add(new IngredientReteta(ingredientName, ingredientQuantity));
         }
-        return new Reteta(productId, ingrediente);
+        return new Recipe(productId, ingrediente);
     }
 
     @Override
-    protected String createEntityAsString(Reteta entity) {
+    protected String createEntityAsString(Recipe entity) {
         String ingrediente = entity.getIngrediente().stream()
                         .map(entry -> entry.getDenumire() + ":" + entry.getCantitate())
                         .collect(Collectors.joining(","));

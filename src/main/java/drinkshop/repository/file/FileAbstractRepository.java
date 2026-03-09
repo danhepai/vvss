@@ -20,13 +20,12 @@ public abstract class FileAbstractRepository<ID, E>
             String line;
             while ((line = br.readLine()) != null) {
                 E entity = extractEntity(line);
-                super.save(entity);
+                if(entity != null)
+                    super.save(entity);
             }
 
         } catch (IOException e) {
-            // TODO: We can do better error handling.
-
-            e.printStackTrace();
+            System.err.println("Unable to load data from file (".concat(e.getMessage()).concat(")"));
         }
     }
 

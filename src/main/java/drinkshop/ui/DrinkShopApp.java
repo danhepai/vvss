@@ -20,8 +20,8 @@ public class DrinkShopApp extends Application {
         // ---------- Initializare Repository-uri care citesc din fisiere ----------
         Repository<Integer, Product> productRepo = new FileProductRepository("data/products.txt");
         Repository<Integer, Order> orderRepo = new FileOrderRepository("data/orders.txt", productRepo);
-        Repository<Integer, Reteta> retetaRepo = new FileRetetaRepository("data/retete.txt");
-        Repository<Integer, Stoc> stocRepo = new FileStocRepository("data/stocuri.txt");
+        Repository<Integer, Recipe> retetaRepo = new FileRetetaRepository("data/retete.txt");
+        Repository<Integer, Stock> stocRepo = new FileStocRepository("data/stocuri.txt");
 
         // ---------- Initializare Service ----------
         DrinkShopService service = new DrinkShopService(productRepo, orderRepo, retetaRepo, stocRepo);

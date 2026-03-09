@@ -22,18 +22,19 @@ public class FileProductRepository
 
         String[] elems = line.split(",");
 
-        // TODO: Check size.
+        if(elems.length < 3){
+            System.err.println("Bad format: ".concat(line));
+            return null;
+        }
 
         int id = Integer.parseInt(elems[0]);
         String name = elems[1];
         double price = Double.parseDouble(elems[2]);
 
-        // TODO: Hai sa tinem toate variabilele in romana.
-
-        CategorieBautura categorie = CategorieBautura.valueOf(elems[3]);
+        CategorieBautura category = CategorieBautura.valueOf(elems[3]);
         TipBautura tip = TipBautura.valueOf(elems[4]);
 
-        return new Product(id, name, price, categorie, tip);
+        return new Product(id, name, price, category, tip);
     }
 
     @Override
