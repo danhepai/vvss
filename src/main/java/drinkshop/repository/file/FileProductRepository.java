@@ -22,9 +22,14 @@ public class FileProductRepository
 
         String[] elems = line.split(",");
 
+        // TODO: Check size.
+
         int id = Integer.parseInt(elems[0]);
         String name = elems[1];
         double price = Double.parseDouble(elems[2]);
+
+        // TODO: Hai sa tinem toate variabilele in romana.
+
         CategorieBautura categorie = CategorieBautura.valueOf(elems[3]);
         TipBautura tip = TipBautura.valueOf(elems[4]);
 

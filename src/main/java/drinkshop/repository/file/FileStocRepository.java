@@ -33,5 +33,7 @@ public class FileStocRepository
                 entity.getIngredient() + ";" +
                 entity.getCantitate() + ";" +
                 entity.getStocMinim();
+
+        // TODO: toate fisierele sunt separate de ',', doar stocurile de ';'. Let's keep it consistent.
     }
 }
