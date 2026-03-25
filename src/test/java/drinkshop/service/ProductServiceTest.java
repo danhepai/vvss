@@ -31,12 +31,10 @@ public class ProductServiceTest {
     @DisplayName("TC1 ECP: Add Valid Product")
     @Timeout(1)
     public void DtestAddProduct_ValidData_ECP() {
-
         Product produsValid = new Product(102, "Ananas", 10.0, CategorieBautura.JUICE, TipBautura.DAIRY);
         int dimensiuneInitiala = productService.getAllProducts().size();
 
         productService.addProduct(produsValid);
-
 
         assertEquals(dimensiuneInitiala + 1, productService.getAllProducts().size(), "Valid Product should be added with succes!");
     }
@@ -46,13 +44,13 @@ public class ProductServiceTest {
     @DisplayName("TC2 ECP: Add Product with Invalid Name")
     @Timeout(1)
     public void testAddProduct_InvalidName_ECP() {
-
         Product produsNumeInvalid = new Product(2, "Mere", 10.0,CategorieBautura.JUICE, TipBautura.DAIRY);
 
         assertThrows(ValidationException.class, () -> {
             productService.addProduct(produsNumeInvalid);
         }, "Name is too short, at least 6 characters!");
     }
+
     @Test
     @Tag("ECP")
     @DisplayName("TC3 ECP: Add Product with Invalid Price")
@@ -64,8 +62,6 @@ public class ProductServiceTest {
             productService.addProduct(produsPretInvalid);
         }, "Price with negative value or 0, not ok!");
     }
-
-
 
     @Test
     @Tag("BVA")
@@ -103,8 +99,6 @@ public class ProductServiceTest {
             productService.addProduct(p);
         }, "Should throw exception for 4 chars name.");
     }
-
-
 
     @Test
     @Tag("BVA")
