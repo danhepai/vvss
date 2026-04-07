@@ -56,15 +56,18 @@ public class ProductService {
     public List<Product> expandedFilterByCategorie(CategorieBautura categorie) {
         List<Product> matchingProducts = new ArrayList<>();
         if (categorie == null) {
+            return new ArrayList<>();
         }
         else if (categorie == CategorieBautura.ALL) {
             matchingProducts = getAllProducts();
-        } else { var allProducts = getAllProducts();
-            var product = new Product(0, null, 0.0, null, null);
+        } else {
+            var allProducts = new ArrayList<>(getAllProducts());
+
             while (!allProducts.isEmpty()){
-                product = allProducts.removeFirst();
+                var product = allProducts.remove(0);
                 if (product.getCategorie() == categorie)
-                    matchingProducts.add(product);}
+                    matchingProducts.add(product);
+            }
         }
         return matchingProducts;
     }

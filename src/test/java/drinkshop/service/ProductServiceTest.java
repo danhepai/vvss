@@ -11,6 +11,7 @@ import org.junit.jupiter.api.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -135,5 +136,56 @@ public class ProductServiceTest {
         assertThrows(ValidationException.class, () -> {
             productService.addProduct(p);
         }, "Should throw exception for price -0.01.");
+    }
+
+    @Test
+    @Tag("WBT")
+    @DisplayName("WBT: Categorie is null")
+    public void testExpandedFilter_NullCategorie() {
+        // Acoperă prima ramură IF (categorie == null)
+        List<Product> result = productService.expandedFilterByCategorie(null);
+        assertEquals(0, result.size(), "Should return empty list for null category");
+    }
+
+    @Test
+    @Tag("WBT")
+    @DisplayName("WBT: Categorie is ALL")
+    public void testExpandedFilter_AllCategorie() {
+        // Pregătire date: adăugăm 2 produse
+        productService.addProduct(new Product(201, "Produs1", 10.0, CategorieBautura.JUICE, TipBautura.PLANT_BASED));
+        productService.addProduct(new Product(202, "Produs2", 15.0, CategorieBautura.ICED_COFFEE, TipBautura.BASIC));
+
+        // Acoperă ramura ELSE IF (categorie == CategorieBautura.ALL)
+        List<Product> result = productService.expandedFilterByCategorie(CategorieBautura.ALL);
+        assertEquals(2, result.size(), "Should return all products when category is ALL");
+    }
+
+    @Test
+    @Tag("WBT")
+    @DisplayName("WBT: Specific Categorie with matches and loop coverage")
+    public void testExpandedFilter_SpecificCategorie() {
+        // Pregătire date
+        productService.addProduct(new Product(301, "SucMere", 10.0, CategorieBautura.JUICE, TipBautura.PLANT_BASED));
+        productService.addProduct(new Product(302, "Cafa buna", 12.0, CategorieBautura.ICED_COFFEE, TipBautura.PLANT_BASED));
+        productService.addProduct(new Product(303, "SucPortocale", 11.0, CategorieBautura.JUICE, TipBautura.PLANT_BASED));
+
+        // Acoperă ramura ELSE, ciclul WHILE și IF-ul din interior (match și non-match)
+        // Acest test verifică:
+        // 1. Statement coverage (trece prin matchingProducts.add)
+        // 2. Decision coverage (un produs are categoria, unul nu)
+        // 3. Loop coverage (lista are mai multe elemente)
+        List<Product> result = productService.expandedFilterByCategorie(CategorieBautura.JUICE);
+
+        assertEquals(2, result.size(), "Should find exactly 2 juices");
+    }
+
+    @Test
+    @Tag("WBT")
+    @DisplayName("WBT: Specific Categorie with empty list")
+    public void testExpandedFilter_EmptyList() {
+        // Acoperă ramura ELSE dar cu listă goală (ciclul WHILE nu se execută)
+        // Necesar pentru Loop Coverage (0 iterații)
+        List<Product> result = productService.expandedFilterByCategorie(CategorieBautura.CLASSIC_COFFEE);
+        assertEquals(0, result.size(), "Should return empty list when no products exist");
     }
 }
