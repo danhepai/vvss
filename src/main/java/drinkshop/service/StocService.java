@@ -4,8 +4,9 @@ import drinkshop.domain.IngredientReteta;
 import drinkshop.domain.Recipe;
 import drinkshop.domain.Stock;
 import drinkshop.repository.Repository;
-
+import java.util.stream.Collectors; // Ensure this import is present
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StocService {
 
@@ -50,6 +51,7 @@ public class StocService {
         return true;
     }
 
+
     public void consuma(Recipe recipe) {
         if (!areSuficient(recipe)) {
             throw new IllegalStateException("Stock insuficient pentru rețeta.");
@@ -59,16 +61,19 @@ public class StocService {
             String ingredient = e.getDenumire();
             double necesar = e.getCantitate();
 
+            // Change .toList() to .collect(Collectors.toList())
             List<Stock> ingredienteStock = stocRepo.findAll().stream()
                     .filter(s -> s.getIngredient().equalsIgnoreCase(ingredient))
-                    .toList();
+                    .collect(Collectors.toList());
 
             double ramas = necesar;
 
             for (Stock s : ingredienteStock) {
                 if (ramas <= 0) break;
 
-                double deScazut = Math.min(s.getCantitate(), ramas);
+                double deScazut = Math.min((double)s.getCantitate(), ramas);
+
+                // Fixed the subtraction logic and maintained your (int) cast
                 s.setCantitate((int)(s.getCantitate() - deScazut));
                 ramas -= deScazut;
 

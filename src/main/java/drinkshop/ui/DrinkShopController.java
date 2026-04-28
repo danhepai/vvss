@@ -111,7 +111,7 @@ public class DrinkShopController {
     // ---------- PRODUCT ----------
     @FXML
     private void onAddProduct() {
-        Recipe r=retetaTable.getSelectionModel().getSelectedItem();
+        Recipe r = retetaTable.getSelectionModel().getSelectedItem();
 
         if (r == null) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -119,14 +119,21 @@ public class DrinkShopController {
             alert.setHeaderText("Selectati o reteta pentru care adugati un produs");
             alert.showAndWait();
             return;
-        }else
-        if (service.getAllProducts().stream().filter(p->p.getId()==r.getId()).toList().size()>0) {
+        }
+
+        // Optimization: Instead of creating a whole list and checking size,
+        // use .anyMatch() which is faster and works in Java 11.
+        boolean exists = service.getAllProducts().stream()
+                .anyMatch(p -> p.getId() == r.getId());
+
+        if (exists) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Error");
             alert.setHeaderText("Exista un produs cu reteta adaugata.");
             alert.showAndWait();
             return;
         }
+
         Product p = new Product(r.getId(),
                 txtProdName.getText(),
                 Double.parseDouble(txtProdPrice.getText()),
