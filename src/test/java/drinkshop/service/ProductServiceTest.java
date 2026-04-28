@@ -21,7 +21,11 @@ public class ProductServiceTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        Files.write(Paths.get("data/products.txt"), new byte[0]);
+        // This creates the 'data' folder if it doesn't exist
+        java.nio.file.Files.createDirectories(java.nio.file.Paths.get("data"));
+
+        // Now this line won't fail anymore
+        java.nio.file.Files.write(java.nio.file.Paths.get("data/products.txt"), new byte[0]);
 
         Repository<Integer, Product> productRepo = new FileProductRepository("data/products.txt");
         productService = new ProductService(productRepo);
