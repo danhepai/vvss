@@ -4,8 +4,8 @@
   <artifactId>MyDrinkShop</artifactId>
   <version>1.0-SNAPSHOT</version>
   <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
     <javafx.version>21</javafx.version>
     <junit.version>5.10.0</junit.version>
   </properties>
@@ -81,6 +81,14 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
             <version>2.22.1</version>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>16</source>
+                <target>16</target>
+            </configuration>
         </plugin>
 
     </plugins>
