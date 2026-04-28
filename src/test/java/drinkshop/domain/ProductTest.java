@@ -71,7 +71,7 @@ class ProductTest {
     }
 
     @Test
-    void testToString() {
+    void testAddProduct_NameLen5_BVA() {
         System.out.println(product.toString());
         assert "Limonada (JUICE, WATER_BASED) - 10.0 lei".equals(product.toString());
     }
