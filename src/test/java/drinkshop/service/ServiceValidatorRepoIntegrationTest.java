@@ -9,29 +9,43 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 class ServiceValidatorRepoIntegrationTest {
 
     private OrderService service;
-    private FileOrderRepository repo; // Integration for R class
+    private FileOrderRepository repo;
     private OrderValidator validator;
-    
-    @Mock
-    private Repository<Integer, Product> productRepo; // Service dependency
 
-    private final String TEST_FILE = "orders_test.txt";
+    @Mock
+    private Repository<Integer, Product> productRepo;
+
+    // Use a path within a data folder for consistency
+    private final String TEST_FILE = "data/orders_test.txt";
 
     @BeforeEach
     void setUp() throws IOException {
-        File f = new File(TEST_FILE);
-        if (f.exists()) {
-            f.delete();
+        // 1. Initialize Mocks first
+        MockitoAnnotations.openMocks(this);
+
+        // 2. Ensure 'data' directory exists
+        Path dataPath = Paths.get("data");
+        if (Files.notExists(dataPath)) {
+            Files.createDirectories(dataPath);
         }
 
+        // 3. Reset the test file
+        Path filePath = Paths.get(TEST_FILE);
+        Files.deleteIfExists(filePath);
+        Files.createFile(filePath);
+
+        // 4. Initialize real components and service
         repo = new FileOrderRepository(TEST_FILE, productRepo);
         validator = new OrderValidator();
         service = new OrderService(repo, productRepo);
@@ -39,8 +53,11 @@ class ServiceValidatorRepoIntegrationTest {
 
     @Test
     void testAddAndFindOrder_Integration() {
+        assertNotNull(service, "Service should be initialized");
+
         Order order = new Order(10);
-        order.addItem(new OrderItem(new Product(1, "Coffee", 10.0, CategorieBautura.CLASSIC_COFFEE, TipBautura.WATER_BASED), 1));
+        Product p = new Product(1, "Coffee", 10.0, CategorieBautura.CLASSIC_COFFEE, TipBautura.WATER_BASED);
+        order.addItem(new OrderItem(p, 1));
         order.setTotalPrice(10.0);
 
         validator.validate(order);
@@ -53,18 +70,15 @@ class ServiceValidatorRepoIntegrationTest {
 
     @Test
     void testDeleteOrder_Integration() {
-        // 1. Use a real Product with a real ID
-        Product water = new Product(2, "Water", 2.0, CategorieBautura.TEA, TipBautura.WATER_BASED);
+        assertNotNull(service, "Service should be initialized");
 
-        // 2. Wrap it in an OrderItem
+        Product water = new Product(2, "Water", 2.0, CategorieBautura.TEA, TipBautura.WATER_BASED);
         OrderItem item = new OrderItem(water, 5);
 
         Order order = new Order(20);
         order.addItem(item);
 
-        // 3. This will now work because item.getProduct().getId() returns 2
         service.addOrder(order);
-
         service.deleteOrder(20);
 
         assertNull(service.findById(20));

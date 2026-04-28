@@ -3,49 +3,63 @@ package drinkshop.service;
 import drinkshop.domain.*;
 import drinkshop.repository.Repository;
 import drinkshop.repository.file.FileOrderRepository;
-import drinkshop.service.validator.OrderValidator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FullSystemIntegrationTest {
     private OrderService service;
     private FileOrderRepository orderRepo;
     private Repository<Integer, Product> productRepo;
-    private final String TEST_FILE = "test_orders.txt";
+    // Use a path that is guaranteed to be writable in the workspace
+    private final String TEST_FILE = "data/test_orders.txt";
 
     @BeforeEach
-    void setUp() {
-        // We still mock ProductRepo because we don't want to rely on
-        // two different files at once, keeping the test focused.
+    void setUp() throws IOException {
+        // 1. Ensure the 'data' directory exists (Crucial for Jenkins)
+        Path dataPath = Paths.get("data");
+        if (Files.notExists(dataPath)) {
+            Files.createDirectories(dataPath);
+        }
+
+        // 2. Ensure the test file is clean
+        Path filePath = Paths.get(TEST_FILE);
+        Files.write(filePath, new byte[0]);
+
+        // 3. Mock the repository
         productRepo = mock(Repository.class);
 
-        // Use the actual File Repository
+        // 4. Initialize
         orderRepo = new FileOrderRepository(TEST_FILE, productRepo);
         service = new OrderService(orderRepo, productRepo);
     }
 
     @AfterEach
     void tearDown() {
-        // Clean up: delete the test file so the next test starts fresh
-        new File(TEST_FILE).delete();
+        File f = new File(TEST_FILE);
+        if (f.exists()) {
+            f.delete();
+        }
     }
 
     @Test
     void testFullFlow_SaveAndRetrieve() {
+        // Safety check to confirm initialization worked
+        assertNotNull(service, "Service should be initialized");
+
         Product p = new Product(1, "Espresso", 12.0, CategorieBautura.CLASSIC_COFFEE, TipBautura.WATER_BASED);
-
         OrderItem item = new OrderItem(p, 2);
-
         Order order = new Order(1);
         order.addItem(item);
 
